@@ -91,7 +91,7 @@ public class TestExecutor extends BaseExecutor {
                 } else {
                     String oldLog = runners.size() > i && runners.get(i) != null ? runners.get(i).log : "";
                     oldLog = oldLog == null ? "" : oldLog;
-                    String log = runnerDetail.log == null ? "" : runnerDetail.log;
+                    String log = runnerDetail.log;
 
                     newLog = log.substring(oldLog.length()).trim();
                     newLog = newLog.replaceAll("(?i)\\[section=(\\w+)\\]([\\s\\S]+?)\\[\\/section\\]", "$1: $2 /$1");

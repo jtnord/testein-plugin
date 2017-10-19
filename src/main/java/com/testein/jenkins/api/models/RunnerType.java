@@ -29,7 +29,7 @@ public enum  RunnerType {
         return null;
     }
 
-    public class RunnerTypeDeserializer implements JsonDeserializer<RunnerType> {
+    public static class RunnerTypeDeserializer implements JsonDeserializer<RunnerType> {
         @Override
         public RunnerType deserialize(JsonElement element, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
             int key = element.getAsInt();

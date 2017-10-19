@@ -6,6 +6,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
@@ -114,8 +115,12 @@ public class TesteinUploadStepBuilder extends Builder implements SimpleBuildStep
         return (TesteinUploadDescriptorImpl)super.getDescriptor();
     }
 
-    protected static TesteinRunBuilder.TesteinRunDescriptorImpl getTopLevelDescriptor(){
-        TesteinRunBuilder.TesteinRunDescriptorImpl sad = (TesteinRunBuilder.TesteinRunDescriptorImpl) Jenkins.getInstance().getDescriptor(TesteinRunBuilder.class);
+    protected static TesteinRunBuilder.TesteinRunDescriptorImpl getTopLevelDescriptor() throws IOException {
+        Jenkins instance = Jenkins.getInstance();
+        if (instance == null) throw new IOException("Can't get instance");
+        Descriptor descriptor = instance.getDescriptor(TesteinRunBuilder.class);
+        if (descriptor == null) throw new IOException("Can't get descriptor");
+        TesteinRunBuilder.TesteinRunDescriptorImpl sad = (TesteinRunBuilder.TesteinRunDescriptorImpl) descriptor;
         sad.load();
         return sad;
     }

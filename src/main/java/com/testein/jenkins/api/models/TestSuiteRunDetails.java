@@ -1,10 +1,9 @@
 package com.testein.jenkins.api.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestSuiteRunDetails {
-        public Application application;
-        public TestSuite testSuite;
-        public TaskDetails run;
-        public List<TaskDetails> tasks;
+        public TaskDetails run = new TaskDetails();
+        public List<TaskDetails> tasks = new ArrayList<>();
 }

@@ -29,7 +29,7 @@ public enum TaskStatus {
         return null;
     }
 
-    public class TaskStatusDeserializer implements JsonDeserializer<TaskStatus> {
+    public static class TaskStatusDeserializer implements JsonDeserializer<TaskStatus> {
         @Override
         public TaskStatus deserialize(JsonElement element, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
             int key = element.getAsInt();

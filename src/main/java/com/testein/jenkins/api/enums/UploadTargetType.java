@@ -29,7 +29,7 @@ public enum UploadTargetType {
         return null;
     }
 
-    public class TaskStatusDeserializer implements JsonDeserializer<com.testein.jenkins.api.models.TaskStatus> {
+    public static class TaskStatusDeserializer implements JsonDeserializer<com.testein.jenkins.api.models.TaskStatus> {
         @Override
         public com.testein.jenkins.api.models.TaskStatus deserialize(JsonElement element, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
             int key = element.getAsInt();

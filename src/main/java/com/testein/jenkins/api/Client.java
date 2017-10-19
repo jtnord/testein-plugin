@@ -32,7 +32,7 @@ public class Client {
                 Gson gson = new GsonBuilder().registerTypeAdapterFactory(new EnumAdapterFactory()).create();
                 InputStream content = response.getEntity().getContent();
 
-                return gson.fromJson(new InputStreamReader(content), tClass);
+                return gson.fromJson(new InputStreamReader(content, "UTF-8"), tClass);
             }
 
             return null;
@@ -74,6 +74,9 @@ public class Client {
             case Delete:
                 request = new HttpDelete(url);
                 break;
+
+            default:
+                throw new IOException("Unknown method");
         }
 
         request.addHeader("content-type", "application/json");
@@ -132,7 +135,7 @@ public class Client {
             Gson gson = new Gson();
             InputStream content = response.getEntity().getContent();
 
-            return gson.fromJson(new InputStreamReader(content), String.class);
+            return gson.fromJson(new InputStreamReader(content, "UTF-8"), String.class);
         }
 
         throw new IOException("Failed to upload file");
@@ -165,7 +168,12 @@ public class Client {
 
                 if (directory != null){
                     File dir = new File(directory);
-                    if (!dir.exists()) dir.mkdir();
+                    if (!dir.exists()) {
+                        boolean mkdir = dir.mkdir();
+                        if (!mkdir){
+                            throw new IOException("Can't create a folder");
+                        }
+                    }
 
                     filePath = directory + "/" + filePath;
                 }

@@ -27,7 +27,7 @@ public class TesteinRunBuilder extends Builder implements SimpleBuildStep {
     public final static String _testTargetType = "test";
     public final static String _suiteTargetType = "suite";
     public final static String _applicationTargetType = "application";
-    public final static String[] _targetTypes = new String[] {_testTargetType, _suiteTargetType, _applicationTargetType};
+    final static String[] _targetTypes = new String[] {_testTargetType, _suiteTargetType, _applicationTargetType};
 
     private final String targetType;
     private final String targetId;
