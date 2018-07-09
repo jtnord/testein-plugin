@@ -28,8 +28,8 @@ public abstract class BaseExecutor implements IExecutor {
         listener.getLogger().println("Downloading report..");
         String url = "";
         switch (type) {
-            case Application:
-                url = "applications/runs/" + runId + "/report";
+            case Project:
+                url = "projects/runs/" + runId + "/report";
                 break;
 
             case Suite:

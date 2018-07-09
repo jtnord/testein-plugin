@@ -1,5 +1,5 @@
 package com.testein.jenkins;
-import com.testein.jenkins.runners.ApplicationExecutor;
+import com.testein.jenkins.runners.ProjectExecutor;
 import com.testein.jenkins.runners.IExecutor;
 import com.testein.jenkins.runners.SuiteExecutor;
 import com.testein.jenkins.runners.TestExecutor;
@@ -26,8 +26,8 @@ import java.util.UUID;
 public class TesteinRunBuilder extends Builder implements SimpleBuildStep {
     public final static String _testTargetType = "test";
     public final static String _suiteTargetType = "suite";
-    public final static String _applicationTargetType = "application";
-    final static String[] _targetTypes = new String[] {_testTargetType, _suiteTargetType, _applicationTargetType};
+    public final static String _projectTargetType = "project";
+    final static String[] _targetTypes = new String[] {_testTargetType, _suiteTargetType, _projectTargetType};
 
     private final String targetType;
     private final String targetId;
@@ -45,7 +45,7 @@ public class TesteinRunBuilder extends Builder implements SimpleBuildStep {
     public void perform(Run<?,?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException {
         listener.getLogger().println("Starting to run Testein " + targetType + " with id " + targetId + "...");
         TesteinRunDescriptorImpl descriptor = getDescriptor();
-        String auth = descriptor.companyName + ":" + descriptor.userName + ":" + descriptor.userToken;
+        String auth = descriptor.email + ":" + descriptor.userToken;
 
         IExecutor executor;
         switch (targetType.toLowerCase()){
@@ -57,8 +57,8 @@ public class TesteinRunBuilder extends Builder implements SimpleBuildStep {
                 executor = new SuiteExecutor(auth, listener, workspace);
                 break;
 
-            case _applicationTargetType:
-                executor = new ApplicationExecutor(auth, listener, workspace);
+            case _projectTargetType:
+                executor = new ProjectExecutor(auth, listener, workspace);
                 break;
 
             default:
@@ -104,8 +104,7 @@ public class TesteinRunBuilder extends Builder implements SimpleBuildStep {
          * <p>
          * If you don't want fields to be persisted, use {@code transient}.
          */
-        private String companyName;
-        private String userName;
+        private String email;
         private String userToken;
 
         /**
@@ -137,17 +136,10 @@ public class TesteinRunBuilder extends Builder implements SimpleBuildStep {
             return FormValidation.ok();
         }
 
-        public FormValidation doCheckCompanyName(@QueryParameter String value)
+        public FormValidation doCheckUserEmail(@QueryParameter String value)
                 throws IOException, ServletException {
             if (value.length() == 0)
-                return FormValidation.error("Please set a company name");
-            return FormValidation.ok();
-        }
-
-        public FormValidation doCheckUserName(@QueryParameter String value)
-                throws IOException, ServletException {
-            if (value.length() == 0)
-                return FormValidation.error("Please set a user name");
+                return FormValidation.error("Please set a user email");
             return FormValidation.ok();
         }
 
@@ -201,27 +193,23 @@ public class TesteinRunBuilder extends Builder implements SimpleBuildStep {
          * This human readable name is used in the configuration screen.
          */
         public String getDisplayName() {
-            return "Run Testein test/suite/application";
+            return "Run Testein test/suite/project";
         }
 
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
             // To persist global configuration information,
             // set that to properties and call save().
-            companyName = formData.getString("companyName");
-            userName = formData.getString("userName");
+            email = formData.getString("email");
             userToken = formData.getString("userToken");
             // ^Can also use req.bindJSON(this, formData);
             //  (easier when there are many fields; need set* methods for this, like setUseFrench)
             save();
             return super.configure(req,formData);
         }
-        public String getCompanyName() {
-            return companyName;
-        }
 
-        public String getUserName() {
-            return userName;
+        public String getEmail() {
+            return email;
         }
 
         public String getUserToken() {

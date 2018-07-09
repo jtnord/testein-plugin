@@ -70,7 +70,7 @@ public class TesteinUploadStepBuilder extends Builder implements SimpleBuildStep
     public void perform(Run<?,?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException {
         listener.getLogger().println("Starting to upload custom test steps to Testein...");
         TesteinRunBuilder.TesteinRunDescriptorImpl descriptor = getTopLevelDescriptor();
-        String auth = descriptor.getCompanyName() + ":" + descriptor.getUserName() + ":" + descriptor.getUserToken();
+        String auth =  descriptor.getEmail() + ":" + descriptor.getUserToken();
 
         Uploader uploader = new Uploader(listener, auth, workspace);
         if (enableJs != null){

@@ -4,7 +4,7 @@ import com.testein.jenkins.api.Client;
 import com.testein.jenkins.api.HttpResponseReadException;
 import com.testein.jenkins.api.enums.HttpMethod;
 import com.testein.jenkins.api.enums.TargetType;
-import com.testein.jenkins.api.models.ApplicationRunDetails;
+import com.testein.jenkins.api.models.ProjectRunDetails;
 import com.testein.jenkins.api.models.TaskDetails;
 import com.testein.jenkins.api.models.TaskStatus;
 import com.testein.jenkins.api.models.TestSuiteRunDetails;
@@ -14,18 +14,18 @@ import hudson.model.TaskListener;
 import java.io.IOException;
 import java.util.UUID;
 
-public class ApplicationExecutor extends BaseExecutor {
-    public ApplicationExecutor(String auth, TaskListener listener, FilePath path) {
+public class ProjectExecutor extends BaseExecutor {
+    public ProjectExecutor(String auth, TaskListener listener, FilePath path) {
         super(auth, listener, path);
     }
 
     @Override
     public UUID start(UUID id) throws IOException {
-        listener.getLogger().println("Starting application with id " + id + "...");
+        listener.getLogger().println("Starting project with id " + id + "...");
         try {
-            UUID runId = client.sendRequest("applications/" + id + "/run", HttpMethod.Post, auth, null, UUID.class);
-            listener.getLogger().println("Successfully started coverage run for application. Run id: = " + runId);
-            listener.getLogger().println("Link to the run: " + Client.BaseUrl + "#/applications/runs/" + runId);
+            UUID runId = client.sendRequest("projects/" + id + "/run", HttpMethod.Post, auth, null, UUID.class);
+            listener.getLogger().println("Successfully started coverage run for project. Run id: = " + runId);
+            listener.getLogger().println("Link to the run: " + Client.BaseUrl + "#/projects/runs/" + runId);
 
             return runId;
         } catch (HttpResponseReadException e) {
@@ -35,11 +35,11 @@ public class ApplicationExecutor extends BaseExecutor {
                     break;
 
                 case 403:
-                    listener.error("Sorry, you aren't allowed to start this application");
+                    listener.error("Sorry, you aren't allowed to start this project");
                     break;
 
                 case 404:
-                    listener.error("Sorry, can't find such application");
+                    listener.error("Sorry, can't find such project");
                     break;
 
                 case 402:
@@ -61,10 +61,10 @@ public class ApplicationExecutor extends BaseExecutor {
 
     @Override
     public void poll(UUID runId, boolean downloadReport) throws Exception {
-        listener.getLogger().println("Start polling application coverage run with id " + runId);
+        listener.getLogger().println("Start polling project coverage run with id " + runId);
 
         while (true) {
-            ApplicationRunDetails details = client.sendRequest("applications/runs/" + runId + "/details", HttpMethod.Get, auth, null, ApplicationRunDetails.class);
+            ProjectRunDetails details = client.sendRequest("projects/runs/" + runId + "/details", HttpMethod.Get, auth, null, ProjectRunDetails.class);
 
             listener.getLogger().println("----");
             listener.getLogger().println("Task status: " + details.run.status.toString());
@@ -75,27 +75,27 @@ public class ApplicationExecutor extends BaseExecutor {
             }
 
             if (details.run.status == TaskStatus.Success) {
-                listener.getLogger().println("Application coverage run has completed successfully");
+                listener.getLogger().println("Project coverage run has completed successfully");
             } else if (details.run.status == TaskStatus.Canceled) {
-                listener.getLogger().println("Application coverage run has been canceled");
+                listener.getLogger().println("Project coverage run has been canceled");
             } else if (details.run.status == TaskStatus.Failed) {
-                listener.error("Application coverage run has failed");
+                listener.error("Project coverage run has failed");
             }
 
             listener.getLogger().println("----");
 
             if (details.run.status.getValue() >= TaskStatus.Canceled.getValue() && downloadReport) {
-                downloadRunReport(runId, auth, TargetType.Application);
+                downloadRunReport(runId, auth, TargetType.Project);
             }
 
             if (details.run.status.getValue() >= TaskStatus.Canceled.getValue()
                     && details.run.status.getValue() < TaskStatus.Success.getValue()) {
-                throw new Exception("Application coverage run hasn't completed successfully");
+                throw new Exception("Project coverage run hasn't completed successfully");
             } else if (details.run.status == TaskStatus.Success) {
                 return;
             }
 
-            listener.getLogger().println("Application coverage run isn't completed yet. Waiting..");
+            listener.getLogger().println("Project coverage run isn't completed yet. Waiting..");
             Thread.sleep(2000);
         }
     }
