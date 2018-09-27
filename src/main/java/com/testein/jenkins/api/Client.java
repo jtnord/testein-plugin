@@ -3,6 +3,7 @@ package com.testein.jenkins.api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.testein.jenkins.api.enums.HttpMethod;
+import jcifs.util.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -17,7 +18,7 @@ import java.io.*;
 import java.util.Map;
 
 public class Client {
-    public static final String BaseUrl = "http://app.testein.com/";
+    public static final String BaseUrl = "https://app.testein.com/";
     public static final String BaseApiUrl = BaseUrl + "api/";
 
     public  <T> T sendRequest(String url, HttpMethod method, String auth, Object data, Class<T> tClass) throws IOException {
@@ -82,7 +83,7 @@ public class Client {
         request.addHeader("content-type", "application/json");
         request.addHeader("Accept", "application/json");
         if (auth != null){
-            request.addHeader("Authorization", auth);
+            request.addHeader("Authorization", encodeAuth(auth));
         }
 
         return httpClient.execute(request);
@@ -123,7 +124,7 @@ public class Client {
         HttpEntity multipart = builder.build();
         request.setEntity(multipart);
 
-        request.addHeader("Authorization", auth);
+        request.addHeader("Authorization", encodeAuth(auth));
 
         HttpResponse response = httpClient.execute(request);
 
@@ -152,7 +153,7 @@ public class Client {
 
         HttpGet request = new HttpGet(url);
         if (auth != null) {
-            request.addHeader("Authorization", auth);
+            request.addHeader("Authorization", encodeAuth(auth));
         }
 
         HttpResponse response = httpClient.execute(request);
@@ -193,5 +194,9 @@ public class Client {
         bos.close();
 
         return filePath;
+    }
+
+    private static String encodeAuth(String auth){
+        return new String(Base64.encode(auth.getBytes()));
     }
 }
