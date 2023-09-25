@@ -3,7 +3,6 @@ package com.testein.jenkins.api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.testein.jenkins.api.enums.HttpMethod;
-import jcifs.util.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -15,6 +14,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.*;
+import java.util.Base64;
 import java.util.Map;
 
 public class Client {
@@ -197,6 +197,6 @@ public class Client {
     }
 
     private static String encodeAuth(String auth){
-        return new String(Base64.encode(auth.getBytes()));
+        return new String(Base64.getEncoder().encode(auth.getBytes()));
     }
 }

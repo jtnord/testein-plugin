@@ -35,6 +35,7 @@
              ~ hpi-plugin.version: The HPI Maven Plugin version used by the plugin..
              ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
         -->
+        <java.level>8</java.level>
     </properties>
 
     <name>Testein</name>
